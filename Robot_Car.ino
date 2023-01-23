@@ -13,7 +13,7 @@ const int ECHOPIN = 15;  //D8
 
 
 /*#define RightMotorSpeedPin 5
-#define RightMotorDirPin   0 
+#define RightMotorDirPin   0
 #define LeftMotorSpeedPin  4
 #define LeftMotorDirPin    2
 */
@@ -21,12 +21,12 @@ int SERVORIGHT = 50;
 int SERVOCENTRE = 100;
 int SERVOLEFT = 150;
 int SERVOPIN = 14;
-const int MA1 = 5; //D1    
-const int MA2 = 16; //D0  
-const int MB1 = 4; //D2   
+const int MA1 = 5; //D1
+const int MA2 = 16; //D0
+const int MB1 = 4; //D2
 const int MB2 = 0; //D3
 const int ENA = 10;//D5
-const int ENB = 12;//D6 
+const int ENB = 12;//D6
 
 int Speed = 900;  // max 1024
 int TSpeed = 1020;  //Turning Speed
@@ -45,9 +45,9 @@ IPAddress remote_IP(192,168,4,1);
 void stop()
 {
   //Apply speed zero for stopping motors
-  
+
   analogWrite(ENA, 0);
-  analogWrite(ENB, 0);  
+  analogWrite(ENB, 0);
   digitalWrite(MA1,LOW);
   digitalWrite(MA2,LOW);
   digitalWrite(MB1,LOW);
@@ -62,14 +62,14 @@ void forward()
   digitalWrite(MA1,HIGH);
   digitalWrite(MA2,LOW);
   digitalWrite(MB1,HIGH);
-  digitalWrite(MB2,LOW); 
+  digitalWrite(MB2,LOW);
     Serial.println("forward");
 }
 
 void back()
 {
   analogWrite(ENA, 255);
-  analogWrite(ENB, 255);  
+  analogWrite(ENB, 255);
   digitalWrite(MA1,LOW);
   digitalWrite(MA2,HIGH);
   digitalWrite(MB1,LOW);
@@ -91,11 +91,11 @@ void left()
 void right()
 {
   analogWrite(ENA, 255);
-  analogWrite(ENB, 255);  
+  analogWrite(ENB, 255);
   digitalWrite(MA1,HIGH);
   digitalWrite(MA2,LOW);
   digitalWrite(MB1,LOW);
-  digitalWrite(MB2,HIGH); 
+  digitalWrite(MB2,HIGH);
     Serial.println("right");
 }
 
@@ -109,13 +109,13 @@ int ping()
     digitalWrite(TRIGPIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIGPIN, LOW);
- 
+
     // read echo
     long duration = pulseIn(ECHOPIN, HIGH);
- 
+
     // convert distance to cm
     unsigned int centimetres = int(duration / 2 / 29.1);
- 
+
     return centimetres;
 }
 
@@ -124,25 +124,25 @@ char scan()
     // ping times in microseconds
     unsigned int left_scan, centre_scan, right_scan;
     char choice;
- 
+
     // scan left
     servo.write(SERVOLEFT);
     //300
     delay(400);
     left_scan = ping();
- 
+
     // scan right
     servo.write(SERVORIGHT);
     //600
     delay(800);
     right_scan = ping();
- 
+
     // scan straight ahead
     servo.write(SERVOCENTRE);
     //300
     delay(400);
     centre_scan = ping();
- 
+
     if (left_scan>right_scan && left_scan>centre_scan)
     {
         choice = 'L';
@@ -154,19 +154,19 @@ char scan()
     else {
       choice = 'C';
     }
- 
+
     return choice;
 }
 
 void setup() {
   // put your setup code here, to run once:
    Serial.begin(9600);
-    Serial.println("Obstacle Avoiding Car v1.0");
-    
+    Serial.println("RoboProto");
+
 // Begin WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   WiFi.mode(WIFI_STA);
-  
+
   // Connecting to WiFi...
   Serial.print("Connecting to ");
   Serial.print(WIFI_SSID);
@@ -176,19 +176,19 @@ void setup() {
     delay(100);
     Serial.print(".");
   }
-  
+
   // Connected to WiFi
   Serial.println();
   Serial.print("Connected! IP address: ");
   Serial.println(WiFi.localIP());
- 
+
   // Begin UDP port
   UDP.begin(UDP_PORT);
   Serial.print("Opening UDP port ");
   Serial.println(UDP_PORT);
 
     servo.attach(SERVOPIN);
-  
+
  pinMode(MA1, OUTPUT);
   pinMode(MA2, OUTPUT);
    pinMode(MB1, OUTPUT);
@@ -197,7 +197,7 @@ void setup() {
       pinMode(ENB, OUTPUT);
     // set the trig pin to output (send sound waves)
     pinMode(TRIGPIN, OUTPUT);
- 
+
     // set the echo pin to input (receive sound waves)
     pinMode(ECHOPIN, INPUT);
 }
@@ -211,7 +211,7 @@ void loop() {
   UDP.endPacket();
 
     delay(10); //TÄTÄ VOI SÄÄTÄÄ
- 
+
     unsigned int distance = ping();
     Serial.print("Distance: "); Serial.println(distance);
     if (distance < 30 && distance > 0)
@@ -223,8 +223,8 @@ void loop() {
             UDP.write('O');
             UDP.endPacket();
 
-            Serial.println("Turn around..."); 
-           // display.drawString(10, 40, "Turn around...") ;         
+            Serial.println("Turn around...");
+           // display.drawString(10, 40, "Turn around...") ;
             back();
             delay(6000); //3000
             left();
@@ -235,10 +235,10 @@ void loop() {
             // stop both motors
             Serial.println("Motor stop...");
             stop();
-            
+
             // scan for obstacles
             char turn_direction = scan();
- 
+
             // turn left/right or ignore and go straight
             if (turn_direction == 'L')
             {
@@ -267,7 +267,7 @@ void loop() {
                 right();
                 delay(1500);//700
               }
-              
+
             }
         }
     }
